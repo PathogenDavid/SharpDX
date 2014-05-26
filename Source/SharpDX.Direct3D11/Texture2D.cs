@@ -110,9 +110,11 @@ namespace SharpDX.Direct3D11
         /// <param name="context"><para>A reference to an <see cref="SharpDX.Direct3D11.DeviceContext"/> object.</para></param>	
         /// <param name="cubeMap"><para>A reference to an <see cref="SharpDX.Direct3D11.Texture2D"/> that represents a cubemap that is going to be projected into spherical harmonics.</para></param>	
         /// <param name="order"><para>Order of the SH evaluation, generates Order^2 coefficients whose degree is Order-1. Valid range is between 2 and 6.</para></param>	
+        /// <param name="generator">A delegate that generates <typeparamref name="TColor"/> objects from a red, green, and blue channel.</param>
+        /// <typeparam name="TColor">The color type to use for the return value. It is intended that this is a struct capable of representing three-component RGB color, but this is not enforced.</typeparam>
         /// <returns>An array of SH Vector for red, green and blue components with a length Order^2.</returns>	
         /// <unmanaged>HRESULT D3DX11SHProjectCubeMap([In] ID3D11DeviceContext* pContext,[In] unsigned int Order,[In] ID3D11Texture2D* pCubeMap,[Out, Buffer] float* pROut,[Out, Buffer, Optional] float* pGOut,[Out, Buffer, Optional] float* pBOut)</unmanaged>	
-        public static Color3[] SHProjectCubeMap(DeviceContext context, Texture2D cubeMap, int order)
+        public static TColor[] SHProjectCubeMap<TColor>(DeviceContext context, Texture2D cubeMap, int order, Func<float, float, float, TColor> generator)
         {
             if (order < 2 || order > 6)
                 throw new ArgumentException("Invalid range for SH order. Must be in the range [2,6]");
@@ -123,12 +125,10 @@ namespace SharpDX.Direct3D11
             var blueSH = new float[length];
 
             D3DX11.SHProjectCubeMap(context, order, cubeMap, redSH, greenSH, blueSH);
-            var result = new Color3[length];
+            var result = new TColor[length];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i].Red = redSH[i];
-                result[i].Green = greenSH[i];
-                result[i].Blue = blueSH[i];
+                result[i] = generator(redSH[i], greenSH[i], blueSH[i]);
             }
             return result;
         }

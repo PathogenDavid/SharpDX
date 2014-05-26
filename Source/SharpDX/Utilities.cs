@@ -52,6 +52,7 @@ namespace SharpDX
     public delegate TResult Func<out TResult>();
     public delegate TResult Func<in T1, out TResult>(T1 paramT1);
     public delegate TResult Func<in T1, in T2, out TResult>(T1 paramT1, T2 paramT2);
+    public delegate TResult Func<in T1, in T2, in T3, out TResult>(T1 paramT1, T2 paramT2, T3 paramT3);
 
     public delegate void Action();
     public delegate void Action<T1, T2>(T1 paramT1, T2 paramT2);
