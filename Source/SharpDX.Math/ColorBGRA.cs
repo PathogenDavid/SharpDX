@@ -101,31 +101,6 @@ namespace SharpDX
         /// <summary>
         /// Initializes a new instance of the <see cref="SharpDX.ColorBGRA"/> struct.
         /// </summary>
-        /// <param name="value">The red, green, blue, and alpha components of the color.</param>
-        public ColorBGRA(Vector4 value)
-        {
-            R = ToByte(value.X);
-            G = ToByte(value.Y);
-            B = ToByte(value.Z);
-            A = ToByte(value.W);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SharpDX.ColorBGRA"/> struct.
-        /// </summary>
-        /// <param name="value">The red, green, and blue components of the color.</param>
-        /// <param name="alpha">The alpha component of the color.</param>
-        public ColorBGRA(Vector3 value, float alpha)
-        {
-            R = ToByte(value.X);
-            G = ToByte(value.Y);
-            B = ToByte(value.Z);
-            A = ToByte(alpha);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SharpDX.ColorBGRA"/> struct.
-        /// </summary>
         /// <param name="bgra">A packed integer containing all four color components in BGRA order.</param>
         public ColorBGRA(uint bgra)
         {
