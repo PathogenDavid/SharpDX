@@ -349,69 +349,6 @@ namespace SharpDX
             }
         }
 
-        /// <summary>
-        /// Reads a Vector2.
-        /// </summary>
-        /// <remarks>
-        /// In order to provide faster read/write, this operation doesn't check stream bound. 
-        /// A client must carefully not read/write above the size of this datastream.
-        /// </remarks>
-        /// <returns>an Vector2 from the stream</returns>
-        public Vector2 ReadVector2()
-        {
-            unsafe
-            {
-                if (!_canRead)
-                    throw new NotSupportedException();
-
-                Vector2 value = *((Vector2*)(_buffer + _position));
-                _position += 4 *2;
-                return value;
-            }
-        }
-
-        /// <summary>
-        /// Reads a Vector3.
-        /// </summary>
-        /// <remarks>
-        /// In order to provide faster read/write, this operation doesn't check stream bound. 
-        /// A client must carefully not read/write above the size of this datastream.
-        /// </remarks>
-        /// <returns>an Vector3 from the stream</returns>
-        public Vector3 ReadVector3()
-        {
-            unsafe
-            {
-                if (!_canRead)
-                    throw new NotSupportedException();
-
-                Vector3 value = *((Vector3*)(_buffer + _position));
-                _position += 4 * 3;
-                return value;
-            }
-        }
-
-        /// <summary>
-        /// Reads a Vector4.
-        /// </summary>
-        /// <remarks>
-        /// In order to provide faster read/write, this operation doesn't check stream bound. 
-        /// A client must carefully not read/write above the size of this datastream.
-        /// </remarks>
-        /// <returns>an Vector4 from the stream</returns>
-        public Vector4 ReadVector4()
-        {
-            unsafe
-            {
-                if (!_canRead)
-                    throw new NotSupportedException();
-
-                Vector4 value = *((Vector4*)(_buffer + _position));
-                _position += 4 * 4;
-                return value;
-            }
-        }
-
         /// <inheritdoc/>
         public unsafe override int ReadByte()
         {

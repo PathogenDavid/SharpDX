@@ -31,7 +31,7 @@ namespace SharpDX.Win32
 		public IntPtr wParam;
 		public IntPtr lParam;
 		public uint time;
-		public Point p;
+		public System.Drawing.Point p;
 	}
 }
 #endif
