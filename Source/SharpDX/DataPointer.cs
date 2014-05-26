@@ -106,17 +106,6 @@ namespace SharpDX
         }
 
         /// <summary>
-        /// Converts this DataPointer to a <see cref="DataBuffer"/>.
-        /// </summary>
-        /// <returns>An instance of a <see cref="DataBuffer"/>.</returns>
-        public DataBuffer ToDataBuffer()
-        {
-            if (Pointer == IntPtr.Zero) throw new InvalidOperationException("DataPointer is Zero");
-
-            return new DataBuffer(this);
-        }
-
-        /// <summary>
         /// Converts this instance to a read only byte buffer.
         /// </summary>
         /// <returns>A readonly byte buffer.</returns>

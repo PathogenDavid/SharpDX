@@ -38,7 +38,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Linq.Expressions;
 using SharpDX.Text;
-
 #endif
 
 namespace SharpDX

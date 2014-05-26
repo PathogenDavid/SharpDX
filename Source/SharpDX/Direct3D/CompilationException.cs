@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
+// Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,29 +18,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using System.Threading;
-
-namespace SharpDX.Threading
+namespace SharpDX.Direct3D
 {
     /// <summary>
-    /// Task utility for threading.
+    /// A compilation exception.
     /// </summary>
-    public class TaskUtil
+    public class CompilationException : SharpDXException
     {
         /// <summary>
-        /// Runs the specified action in a thread.
+        /// Initializes a new instance of the <see cref="CompilationException"/> class.
         /// </summary>
-        /// <param name="action">The action.</param>
-        /// <param name="taskName">Name of the task.</param>
-        public static void Run(Action action, string taskName = "SharpDXTask")
+        /// <param name="message">The message.</param>
+        public CompilationException(string message) : base(message)
         {
-#if W8CORE
-            System.Threading.Tasks.Task.Factory.StartNew(() => action(), System.Threading.Tasks.TaskCreationOptions.LongRunning);
-#else
-            var thread = new System.Threading.Thread(() => action()) { IsBackground = true, Name = taskName };
-            thread.Start();
-#endif
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompilationException"/> class.
+        /// </summary>
+        /// <param name="errorCode">The error code.</param>
+        /// <param name="message">The message.</param>
+        public CompilationException(Result errorCode, string message) : base(errorCode, message)
+        {
         }
     }
 }

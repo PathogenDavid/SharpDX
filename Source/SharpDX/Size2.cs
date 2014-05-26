@@ -20,7 +20,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using SharpDX.Serialization;
 
 namespace SharpDX
 {
@@ -28,7 +27,7 @@ namespace SharpDX
     /// Structure using the same layout than <see cref="System.Drawing.Size"/>.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct Size2 : IEquatable<Size2>, IDataSerializable
+    public struct Size2
     {
         /// <summary>
         /// A zero size with (width, height) = (0,0)
@@ -60,81 +59,5 @@ namespace SharpDX
         /// Height.
         /// </summary>
         public int Height;
-
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="System.Object"/> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public bool Equals(Size2 other)
-        {
-            return other.Width == Width && other.Height == Height;
-        }
-
-        /// <inheritdoc/>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != typeof(Size2)) return false;
-            return Equals((Size2)obj);
-        }
-
-        /// <inheritdoc/>
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (Width * 397) ^ Height;
-            }
-        }
-
-        /// <summary>
-        /// Implements the operator ==.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>
-        /// The result of the operator.
-        /// </returns>
-        public static bool operator ==(Size2 left, Size2 right)
-        {
-            return left.Equals(right);
-        }
-
-        /// <summary>
-        /// Implements the operator !=.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>
-        /// The result of the operator.
-        /// </returns>
-        public static bool operator !=(Size2 left, Size2 right)
-        {
-            return !left.Equals(right);
-        }
-
-        public override string ToString()
-        {
-            return string.Format("({0},{1})", Width, Height);
-        }
-    
-        /// <inheritdoc/>
-        void IDataSerializable.Serialize(BinarySerializer serializer)
-        {
-            // Write optimized version without using Serialize methods
-            if (serializer.Mode == SerializerMode.Write)
-            {
-                serializer.Writer.Write(Width);
-                serializer.Writer.Write(Height);
-            }
-            else
-            {
-                Width = serializer.Reader.ReadInt32();
-                Height = serializer.Reader.ReadInt32();
-            }
-        }
     }
 }

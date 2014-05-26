@@ -20,7 +20,7 @@
 
 using System;
 
-namespace SharpDX
+namespace SharpDX.Direct3D
 {
     /// <summary>
     /// Generic class to hold a shader compilation results.

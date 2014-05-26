@@ -19,18 +19,17 @@
 // THE SOFTWARE.
 namespace SharpDX.Text
 {
+#if W8CORE
     /// <summary>
     /// Overrides <see cref="System.Text.ASCIIEncoding"/> in order to provide <see cref="ASCIIEncoding"/> for Win8 Modern App.
     /// </summary>
     public abstract class Encoding : System.Text.Encoding
     {
-#if W8CORE
         /// <summary>
         /// Returns an encoding for the ASCII character set. The returned encoding
         //  will be an instance of the ASCIIEncoding class.
         /// </summary>
         public static readonly ASCIIEncoding ASCII = new ASCIIEncoding();
-#endif
     }
 
     /// <summary>
@@ -77,4 +76,5 @@ namespace SharpDX.Text
             return base.GetString(bytes, 0, bytes.Length);
         }
     }
+#endif
 }

@@ -20,7 +20,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using SharpDX.Serialization;
 
 namespace SharpDX
 {
@@ -28,8 +27,7 @@ namespace SharpDX
     /// A boolean value stored on 4 bytes (instead of 1 in .NET).
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Size = 4)]
-    [DynamicSerializer("TKB1")]
-    public struct Bool : IEquatable<Bool>, IDataSerializable
+    public struct Bool : IEquatable<Bool>
     {
         private int boolValue;
 
@@ -110,20 +108,5 @@ namespace SharpDX
         {
             return string.Format("{0}", boolValue != 0);
         }
-
-        /// <inheritdoc/>
-        void IDataSerializable.Serialize(BinarySerializer serializer)
-        {
-            // Write optimized version without using Serialize methods
-            if (serializer.Mode == SerializerMode.Write)
-            {
-                serializer.Writer.Write(boolValue);
-            }
-            else
-            {
-                boolValue = serializer.Reader.ReadInt32();
-            }
-        }
-
     }
 }
