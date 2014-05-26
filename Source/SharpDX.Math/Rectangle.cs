@@ -156,7 +156,7 @@ namespace SharpDX
             set { _bottom = _top + value; }
         }
 
-        internal void MakeXYAndWidthHeight()
+        public void MakeXYAndWidthHeight()
         {
             _right = (_right - _left);
             _bottom = (_bottom - _top);

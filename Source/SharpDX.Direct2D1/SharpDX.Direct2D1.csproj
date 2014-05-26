@@ -307,6 +307,10 @@
       <Name>SharpDX.DXGI</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\SharpDX.Math\SharpDX.Math.csproj">
+      <Project>{b75402d2-5a9a-4f80-9684-6dccc183fc55}</Project>
+      <Name>SharpDX.Math</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpDX\SharpDX.csproj">
       <Project>{d0bcd56a-41c4-4a4e-8590-26864ced07ff}</Project>
       <Name>SharpDX</Name>
