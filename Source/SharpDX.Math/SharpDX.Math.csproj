@@ -7,12 +7,10 @@
     <ProjectGuid>{B75402D2-5A9A-4F80-9684-6DCCC183FC55}</ProjectGuid>
     <RootNamespace>SharpDX</RootNamespace>
     <AssemblyName>SharpDX.Math</AssemblyName>
-    <!-- Disable FastUpToDate check in order to let VS to always run BeforeBuild. 
-    Related to this issue http://connect.microsoft.com/VisualStudio/feedback/details/735718/visual-studio-2011-beta-is-incorrectly-building-solution -->
-    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition=" '$(SharpDXWin8)' == 'false'">
     <Reference Include="System" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
@@ -42,7 +40,13 @@
     <Compile Include="Viewport.cs" />
     <Compile Include="ViewportF.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\SharpDX\SharpDX.csproj">
+      <Project>{d0bcd56a-41c4-4a4e-8590-26864ced07ff}</Project>
+      <Name>SharpDX</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(SolutionDir)\Build\SharpDX.PostSettings.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
