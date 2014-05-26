@@ -106,10 +106,13 @@ namespace SharpDX.Direct3D11
         /// <unmanaged-short>ID3D11DeviceContext::RSSetScissorRects</unmanaged-short>	
         public void SetScissorRectangle(int left, int top, int right, int bottom)
         {
-            var rect = new Rectangle() { Left = left, Top = top, Right = right, Bottom = bottom };
+            int[] rect = { left, top, right, bottom };
             unsafe
             {
-                SetScissorRects(1, new IntPtr(&rect));
+                fixed (int* rectP = rect)
+                {
+                    SetScissorRects(1, (IntPtr)rectP);
+                }
             }
         }
 
@@ -117,18 +120,21 @@ namespace SharpDX.Direct3D11
         ///   Binds a set of scissor rectangles to the rasterizer stage.
         /// </summary>
         /// <param name = "scissorRectangles">The set of scissor rectangles to bind.</param>
+        /// <typeparam name="TRectangle">The type to use for the rectangles. This type must be 4 ints long and match the layout of <c>D3D11_RECT</c>.</typeparam>
         /// <remarks>	
         /// <p>All scissor rects must be set atomically as one operation. Any scissor rects not defined by the call are disabled.</p><p>The scissor rectangles will only be used if ScissorEnable is set to true in the rasterizer state (see <strong><see cref="SharpDX.Direct3D11.RasterizerStateDescription"/></strong>).</p><p>Which scissor rectangle to use is determined by the SV_ViewportArrayIndex semantic output by a geometry shader (see shader semantic syntax). If a geometry shader does not make use of the SV_ViewportArrayIndex semantic then Direct3D will use the first scissor rectangle in the array.</p><p>Each scissor rectangle in the array corresponds to a viewport in an array of viewports (see <strong><see cref="SharpDX.Direct3D11.RasterizerStage.SetViewports"/></strong>).</p>	
         /// </remarks>	
         /// <msdn-id>ff476478</msdn-id>	
         /// <unmanaged>void ID3D11DeviceContext::RSSetScissorRects([In] unsigned int NumRects,[In, Buffer, Optional] const void* pRects)</unmanaged>	
         /// <unmanaged-short>ID3D11DeviceContext::RSSetScissorRects</unmanaged-short>	
-        public void SetScissorRectangles(params Rectangle[] scissorRectangles)
+        public void SetScissorRectangles<TRectangle>(params TRectangle[] scissorRectangles) where TRectangle : struct
         {
+            if (Utilities.SizeOf<TRectangle>() != (sizeof(int) * 4))
+                throw new ArgumentException("TRectangle must be 4 ints long.", "TRectangle");
+
             unsafe
             {
-                fixed (void* pBuffer = scissorRectangles)
-                    SetScissorRects(scissorRectangles == null ? 0 : scissorRectangles.Length, (IntPtr)pBuffer);
+                SetScissorRects(scissorRectangles == null ? 0 : scissorRectangles.Length, (IntPtr)Interop.Fixed(ref scissorRectangles));
             }
         }
 
@@ -149,10 +155,13 @@ namespace SharpDX.Direct3D11
         /// <unmanaged-short>ID3D11DeviceContext::RSSetViewports</unmanaged-short>	
         public void SetViewport(float x, float y, float width, float height, float minZ = 0.0f, float maxZ = 1.0f)
         {
-            var viewport = new ViewportF(x, y, width, height, minZ, maxZ);
+            float[] viewport = { x, y, width, height, minZ, maxZ };
             unsafe
             {
-                SetViewports(1, new IntPtr(&viewport));
+                fixed (float* viewportP = viewport)
+                {
+                    SetViewports(1, (IntPtr)viewportP);
+                }
             }
         }
 
@@ -160,17 +169,21 @@ namespace SharpDX.Direct3D11
         /// Binds a single viewport to the rasterizer stage.
         /// </summary>
         /// <param name="viewport">The viewport.</param>
+        /// <typeparam name="TViewportF">The type to use for the viewport. This type must be 6 floats long and match the layout of <c>D3D11_VIEWPORT</c>.</typeparam>
         /// <remarks>	
         /// <p></p><p>All viewports must be set atomically as one operation. Any viewports not defined by the call are disabled.</p><p>Which viewport to use is determined by the SV_ViewportArrayIndex semantic output by a geometry shader; if a geometry shader does not specify the semantic, Direct3D will use the first viewport in the array.</p>	
         /// </remarks>	
         /// <msdn-id>ff476480</msdn-id>	
         /// <unmanaged>void ID3D11DeviceContext::RSSetViewports([In] unsigned int NumViewports,[In, Buffer, Optional] const void* pViewports)</unmanaged>	
         /// <unmanaged-short>ID3D11DeviceContext::RSSetViewports</unmanaged-short>	
-        public void SetViewport(ViewportF viewport)
+        public void SetViewport<TViewportF>(TViewportF viewport) where TViewportF : struct
         {
+            if (Utilities.SizeOf<TViewportF>() != (sizeof(float) * 6))
+                throw new ArgumentException("TViewportF must be 6 floats long.", "TViewportF");
+
             unsafe
             {
-                SetViewports(1, new IntPtr(&viewport));
+                SetViewports(1, (IntPtr)Interop.Fixed(ref viewport));
             }
         }
 
@@ -179,17 +192,34 @@ namespace SharpDX.Direct3D11
         /// </summary>
         /// <param name="viewports">The set of viewports to bind.</param>
         /// <param name="count">The number of viewport to set.</param>
+        /// <typeparam name="TViewportF">The type to use for the viewport. This type must be 6 floats long and match the layout of <c>D3D11_VIEWPORT</c>.</typeparam>
         /// <msdn-id>ff476480</msdn-id>
         ///   <unmanaged>void ID3D11DeviceContext::RSSetViewports([In] unsigned int NumViewports,[In, Buffer, Optional] const void* pViewports)</unmanaged>
         ///   <unmanaged-short>ID3D11DeviceContext::RSSetViewports</unmanaged-short>
         /// <remarks><p></p><p>All viewports must be set atomically as one operation. Any viewports not defined by the call are disabled.</p><p>Which viewport to use is determined by the SV_ViewportArrayIndex semantic output by a geometry shader; if a geometry shader does not specify the semantic, Direct3D will use the first viewport in the array.</p></remarks>
-        public void SetViewports(ViewportF[] viewports, int count = 0)
+        public void SetViewports<TViewportF>(TViewportF[] viewports, int count) where TViewportF : struct
         {
+            if (Utilities.SizeOf<TViewportF>() != (sizeof(float) * 6))
+                throw new ArgumentException("TViewportF must be 6 floats long.", "TViewportF");
+
             unsafe
             {
-                fixed (void* pBuffer = viewports)
-                    SetViewports(viewports == null ? 0 : count <= 0 ? viewports.Length : count, (IntPtr)pBuffer);
+                SetViewports(viewports == null ? 0 : count <= 0 ? viewports.Length : count, (IntPtr)Interop.Fixed(ref viewports));
             }
+        }
+
+        /// <summary>
+        /// Binds a set of viewports to the rasterizer stage.
+        /// </summary>
+        /// <param name="viewports">The set of viewports to bind.</param>
+        /// <typeparam name="TViewportF">The type to use for the viewport. This type must be 6 floats long and match the layout of <c>D3D11_VIEWPORT</c>.</typeparam>
+        /// <msdn-id>ff476480</msdn-id>
+        ///   <unmanaged>void ID3D11DeviceContext::RSSetViewports([In] unsigned int NumViewports,[In, Buffer, Optional] const void* pViewports)</unmanaged>
+        ///   <unmanaged-short>ID3D11DeviceContext::RSSetViewports</unmanaged-short>
+        /// <remarks><p></p><p>All viewports must be set atomically as one operation. Any viewports not defined by the call are disabled.</p><p>Which viewport to use is determined by the SV_ViewportArrayIndex semantic output by a geometry shader; if a geometry shader does not specify the semantic, Direct3D will use the first viewport in the array.</p></remarks>
+        public void SetViewports<TViewportF>(params TViewportF[] viewports) where TViewportF : struct
+        {
+            SetViewports(viewports, viewports == null ? 0 : viewports.Length);
         }
     }
 }
