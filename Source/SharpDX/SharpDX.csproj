@@ -35,8 +35,10 @@
     <Compile Include="IO\NativeFileOptions.cs" />
     <Compile Include="IO\NativeFileShare.cs" />
     <Compile Include="IO\NativeFileStream.cs" />
+    <Compile Include="Multimedia\AudioEndpointRole.cs" />
     <Compile Include="Multimedia\FourCC.cs" />
     <Compile Include="ModuleInit.cs" />
+    <Compile Include="Multimedia\NamespaceDoc.cs" />
     <Compile Include="Multimedia\WaveFormat.cs" />
     <Compile Include="Multimedia\WaveFormatAdpcm.cs" />
     <Compile Include="Multimedia\WaveFormatExtensible.cs" />
