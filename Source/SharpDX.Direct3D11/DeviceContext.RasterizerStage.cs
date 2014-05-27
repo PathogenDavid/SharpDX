@@ -32,13 +32,13 @@ namespace SharpDX.Direct3D11
         /// <msdn-id>ff476477</msdn-id>	
         /// <unmanaged>void ID3D11DeviceContext::RSGetViewports([InOut] unsigned int* pNumViewports,[Out, Buffer, Optional] D3D11_VIEWPORT* pViewports)</unmanaged>	
         /// <unmanaged-short>ID3D11DeviceContext::RSGetViewports</unmanaged-short>	
-        public SharpDX.ViewportF[] GetViewports()
+        public TViewportF[] GetViewports<TViewportF>() where TViewportF : struct
         {
             int numViewports = 0;
 
-            GetViewports(ref numViewports, null);
+            GetViewports<TViewportF>(ref numViewports, null);
 
-            var viewports = new SharpDX.ViewportF[numViewports];
+            var viewports = new TViewportF[numViewports];
             GetViewports(ref numViewports, viewports);
 
             return viewports;
@@ -52,7 +52,7 @@ namespace SharpDX.Direct3D11
         /// <msdn-id>ff476477</msdn-id>	
         /// <unmanaged>void ID3D11DeviceContext::RSGetViewports([InOut] unsigned int* pNumViewports,[Out, Buffer, Optional] D3D11_VIEWPORT* pViewports)</unmanaged>	
         /// <unmanaged-short>ID3D11DeviceContext::RSGetViewports</unmanaged-short>	
-        public void GetViewports(SharpDX.ViewportF[] viewports)
+        public void GetViewports<TViewportF>(TViewportF[] viewports) where TViewportF : struct
         {
             int numViewports = viewports.Length;
             GetViewports(ref numViewports, viewports);
@@ -66,12 +66,12 @@ namespace SharpDX.Direct3D11
         /// <msdn-id>ff476475</msdn-id>	
         /// <unmanaged>void ID3D11DeviceContext::RSGetScissorRects([InOut] unsigned int* pNumRects,[Out, Buffer, Optional] RECT* pRects)</unmanaged>	
         /// <unmanaged-short>ID3D11DeviceContext::RSGetScissorRects</unmanaged-short>	
-        public SharpDX.Rectangle[] GetScissorRectangles()
+        public TRectangleI[] GetScissorRectangles<TRectangleI>() where TRectangleI : struct
         {
             int numRects = 0;
-            GetScissorRects(ref numRects, null);
+            GetScissorRects<TRectangleI>(ref numRects, null);
 
-            SharpDX.Rectangle[] scissorRectangles = new Rectangle[numRects];
+            TRectangleI[] scissorRectangles = new TRectangleI[numRects];
             GetScissorRects(ref numRects, scissorRectangles);
 
             return scissorRectangles;
@@ -85,7 +85,7 @@ namespace SharpDX.Direct3D11
         /// <msdn-id>ff476475</msdn-id>	
         /// <unmanaged>void ID3D11DeviceContext::RSGetScissorRects([InOut] unsigned int* pNumRects,[Out, Buffer, Optional] RECT* pRects)</unmanaged>	
         /// <unmanaged-short>ID3D11DeviceContext::RSGetScissorRects</unmanaged-short>	
-        public void GetScissorRectangles(SharpDX.Rectangle[] scissorRectangles)
+        public void GetScissorRectangles<TRectangleI>(TRectangleI[] scissorRectangles) where TRectangleI : struct
         {
             int numRects = scissorRectangles.Length;
             GetScissorRects(ref numRects, scissorRectangles);
@@ -120,17 +120,17 @@ namespace SharpDX.Direct3D11
         ///   Binds a set of scissor rectangles to the rasterizer stage.
         /// </summary>
         /// <param name = "scissorRectangles">The set of scissor rectangles to bind.</param>
-        /// <typeparam name="TRectangle">The type to use for the rectangles. This type must be 4 ints long and match the layout of <c>D3D11_RECT</c>.</typeparam>
+        /// <typeparam name="TRectangleI">The type to use for the rectangles. This type must be 4 ints long and match the layout of <c>D3D11_RECT</c>.</typeparam>
         /// <remarks>	
         /// <p>All scissor rects must be set atomically as one operation. Any scissor rects not defined by the call are disabled.</p><p>The scissor rectangles will only be used if ScissorEnable is set to true in the rasterizer state (see <strong><see cref="SharpDX.Direct3D11.RasterizerStateDescription"/></strong>).</p><p>Which scissor rectangle to use is determined by the SV_ViewportArrayIndex semantic output by a geometry shader (see shader semantic syntax). If a geometry shader does not make use of the SV_ViewportArrayIndex semantic then Direct3D will use the first scissor rectangle in the array.</p><p>Each scissor rectangle in the array corresponds to a viewport in an array of viewports (see <strong><see cref="SharpDX.Direct3D11.RasterizerStage.SetViewports"/></strong>).</p>	
         /// </remarks>	
         /// <msdn-id>ff476478</msdn-id>	
         /// <unmanaged>void ID3D11DeviceContext::RSSetScissorRects([In] unsigned int NumRects,[In, Buffer, Optional] const void* pRects)</unmanaged>	
         /// <unmanaged-short>ID3D11DeviceContext::RSSetScissorRects</unmanaged-short>	
-        public void SetScissorRectangles<TRectangle>(params TRectangle[] scissorRectangles) where TRectangle : struct
+        public void SetScissorRectangles<TRectangleI>(params TRectangleI[] scissorRectangles) where TRectangleI : struct
         {
-            if (Utilities.SizeOf<TRectangle>() != (sizeof(int) * 4))
-                throw new ArgumentException("TRectangle must be 4 ints long.", "TRectangle");
+            if (Utilities.SizeOf<TRectangleI>() != (sizeof(int) * 4))
+                throw new ArgumentException("TRectangleI must be 4 ints long.", "TRectangleI");
 
             unsafe
             {

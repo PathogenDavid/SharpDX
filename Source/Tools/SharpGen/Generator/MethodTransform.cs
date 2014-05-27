@@ -357,6 +357,12 @@ namespace SharpGen.Generator
                     paramMethod.IsArray = false;
                                 
                 method.Add(paramMethod);
+
+                //Add generic type to this method's list if necessary:
+                if (publicType.IsGenericTypeParam)
+                {
+                    method.AddGenericTypeParameter(publicType);
+                }
             }            
         }
     }

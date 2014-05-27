@@ -27,6 +27,8 @@ namespace SharpGen.Model
 
         public bool IsReference { get; set; }
 
+        public bool IsGenericTypeParam { get; set; }
+
         public bool IsPointer
         {
             get { return Type != null && Type == typeof (IntPtr); }

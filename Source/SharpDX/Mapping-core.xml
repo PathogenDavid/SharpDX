@@ -546,7 +546,7 @@
     <bind from="D3DXVECTOR3_16F" to="System.Int32" />
     <bind from="D3DXVECTOR4_16F" to="System.Int32" />
     <bind from="D3D_OMAC" to="System.Guid" />
-    <bind from="D3DRECT" to="SharpDX.Rectangle" />
+    <bind from="D3DRECT" to="SharpDX.Rectangle" use-generic="TRectangleI" />
 
     <!-- DirectX 11.2 structure -->
     <ifdef name="DIRECTX11_2">
@@ -565,7 +565,7 @@
     <bind from="tWAVEFORMATEX" to="SharpDX.Multimedia.WaveFormat" />    
     <bind from="WAVEFORMATEXTENSIBLE" to="SharpDX.Multimedia.WaveFormatExtensible" />
     <bind from="POINT" to="SharpDX.Point" />
-    <bind from="RECT" to="SharpDX.Rectangle" />
+    <bind from="RECT" to="SharpDX.Rectangle" use-generic="TRectangleI" />
     <bind from="BOOL" to="SharpDX.Bool"/>
     <bind from="HACCEL" to="System.IntPtr"/>    
     <bind from="HWND" to="System.IntPtr"/>

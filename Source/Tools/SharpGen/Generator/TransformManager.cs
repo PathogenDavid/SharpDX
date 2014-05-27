@@ -384,8 +384,44 @@ namespace SharpGen.Generator
                     // Register bindings from <bindings> tag
                     foreach (var bindingRule in file.Bindings)
                     {
-                        BindType(bindingRule.From, ImportType(bindingRule.To),
-                                 string.IsNullOrEmpty(bindingRule.Marshal) ? null : ImportType(bindingRule.Marshal));
+                        CsTypeBase martshalType = string.IsNullOrEmpty(bindingRule.Marshal) ? null : ImportType(bindingRule.Marshal);
+                        if (bindingRule.UseGeneric == null)
+                        {
+                            BindType(bindingRule.From, ImportType(bindingRule.To), martshalType);
+                        }
+                        else
+                        {
+                            Logger.Message("Adding generic parameter [{0}] -> [{1}] which has To=[{2}] and SizeOf=[{3}]",
+                                bindingRule.From, bindingRule.UseGeneric, bindingRule.To, bindingRule.SizeOf);
+                            int? sizeOf = bindingRule.SizeOf;
+                            
+                            //Attempt to determine the size of the generic parameter type if it was not explicitly specified:
+                            if (!sizeOf.HasValue)
+                            {
+                                CsTypeBase toType = GetTypeDefined(bindingRule.To);
+                                if (toType != null)
+                                {
+                                    sizeOf = toType.SizeOf;
+
+                                    if (sizeOf < 1)
+                                    {
+                                        Logger.Warning(
+                                            "Generic type paramater binding [{0}] -> [{1}] referred to a to type [{2}] without specifying a sizeof attribute, but " +
+                                            "[{2}] does has a sizeof less than 1!", bindingRule.From, bindingRule.UseGeneric, bindingRule.To
+                                        );
+                                    }
+                                }
+                                else
+                                {
+                                    Logger.Warning(
+                                        "Generic type paramater binding [{0}] -> [{1}] referred to a to type [{2}] that was unrecognized and the sizeof attribute was not specified. "+
+                                        "Size will not be checked when this generic type parameter is used!", bindingRule.From, bindingRule.UseGeneric, bindingRule.To
+                                    );
+                                }
+                            }
+
+                            BindType(bindingRule.From, ImportGenericTypeParameter(bindingRule.UseGeneric, (sizeOf.HasValue ? sizeOf.Value : Int32.MinValue)), martshalType);
+                        }
                     }
                 }
 
@@ -917,7 +953,7 @@ namespace SharpGen.Generator
             if (!_mapIncludeToNamespace.TryGetValue(element.ParentInclude.Name, out ns))
             {
                 Logger.Fatal("Unable to find namespace for element [{0}] from include [{1}]", element, element.ParentInclude.Name);
-            }
+            };
             return ns;
         }
 
@@ -935,12 +971,21 @@ namespace SharpGen.Generator
         /// <summary>
         /// Gets a C# type is registered.
         /// </summary>
+        /// <param name = "type">The qualified name of the C# type.</param>
+        public CsTypeBase GetTypeDefined(string qualifiedName)
+        {
+            CsTypeBase outType;
+            _mapDefinedCSharpType.TryGetValue(qualifiedName, out outType);
+            return outType;
+        }
+
+        /// <summary>
+        /// Gets a C# type is registered.
+        /// </summary>
         /// <param name = "type">The C# type.</param>
         public CsTypeBase GetTypeDefined(CsTypeBase type)
         {
-            CsTypeBase outType;
-            _mapDefinedCSharpType.TryGetValue(type.QualifiedName, out outType);
-            return outType;
+            return GetTypeDefined(type.QualifiedName);
         }
 
         /// <summary>
@@ -998,6 +1043,29 @@ namespace SharpGen.Generator
                 }
                 cSharpType = new CsTypeBase {Name = typeName, Type = type, SizeOf = sizeOf};
                 DefineType(cSharpType);
+            }
+            else if (cSharpType.IsGenericTypeParam)
+            {
+                Logger.Error("Tried to define new type [{0}] which was previously defined as a generic parameter type!", qualifiedName);
+            }
+            return cSharpType;
+        }
+
+        public CsTypeBase ImportGenericTypeParameter(string genericName, int sizeOf)
+        {
+            CsTypeBase cSharpType;
+            if (!_mapDefinedCSharpType.TryGetValue(genericName, out cSharpType))
+            {
+                cSharpType = new CsTypeBase { Name = genericName, SizeOf = sizeOf, IsGenericTypeParam = true };
+                DefineType(cSharpType);
+            }
+            else if (cSharpType.SizeOf != sizeOf)
+            {
+                Logger.Error("Generic parameter type [{0}] is defined with multiple sizes (Now {1}, previously {2})", genericName, sizeOf, cSharpType.SizeOf);
+            }
+            else if (!cSharpType.IsGenericTypeParam)
+            {
+                Logger.Error("Tried to define a new generic parameter type [{0}] which was previously defined as a normal type!", genericName);
             }
             return cSharpType;
         }

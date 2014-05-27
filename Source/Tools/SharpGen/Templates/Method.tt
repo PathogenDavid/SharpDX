@@ -99,7 +99,18 @@
 		} else {
         	#>        <#+
 		}
-		#><#= method.VisibilityName #><#= method.PublicReturnTypeQualifiedName #> <#= method.Name #>(<#+
+		#><#= method.VisibilityName #><#= method.PublicReturnTypeQualifiedName #> <#= method.Name #><#+
+        if (method.GenericTypeParameters.Count > 0) {
+            #><<#+
+            bool first = true;
+            foreach (var typeParam in method.GenericTypeParameters) {
+                if (first) { first = false; }
+                else { #>, <#+ }
+                #><#= typeParam.Name #><#+
+            }
+            #>><#+
+        }
+        #>(<#+
 		int i = 0;
 		int maxParam = method.PublicParameterCount;
 		foreach (var param in method.PublicParameters) {
@@ -109,7 +120,16 @@
 			i++;
 		}
 #>)<#+
-		if (method.Hidden) {
+		if (method.GenericTypeParameters.Count > 0 && (method.Visibility & SharpGen.Config.Visibility.Override) == 0) {
+            foreach (var typeParam in method.GenericTypeParameters) {
+                #> 
+            where <#= typeParam.Name #> : struct<#+
+            }
+#> 
+       <#+
+        }
+
+        if (method.Hidden) {
 			#> */
 
 <#+
@@ -117,6 +137,20 @@
 		}
 		// Else Open Body
 #> {
+<#+
+        //Add generic type parameter verifications if necessary:
+        foreach (var typeParam in method.GenericTypeParameters) {
+            if (!typeParam.SizeOf.HasValue) {
+                continue;//Skip types that we don't know the size of to check it.
+            }
+
+#>
+            if (Utilities.SizeOf<<#= typeParam.Name #>>() != <#= typeParam.SizeOf #>)
+                throw new ArgumentException("The size of <#= typeParam.Name #> must be <#= typeParam.SizeOf #> bytes.", "<#= typeParam.Name #>");
+            
+<#+
+        }
+#>
             unsafe {
 <#+			
 				// ---------------------------------------------------------------------------------------------------
@@ -135,7 +169,7 @@
 					
 					// Handle In-Optional
 					if (param.IsArray && param.IsValueType && !param.HasNativeValueType) {
-						if (param.IsOptionnal) {#>
+						if (param.IsOptionnal && !param.IsGenericType) {#>
                 <#= param.PublicType.QualifiedName #>[] <#= param.TempName #>_ = <#= param.Name #>;
 <#+						} 
 						continue;
@@ -248,6 +282,9 @@
 				// Handle fixed parameters
 				// ---------------------------------------------------------------------------------------------------
 				foreach (var param in method.Parameters) {
+                    if (param.IsGenericType && param.IsArray) {
+                        continue;
+                    }
 					if (param.IsArray && param.IsValueType) {
 						if (param.HasNativeValueType || param.IsOptionnal) {#>
                 fixed (void* <#= param.TempName #> = <#= param.TempName #>_)

@@ -142,9 +142,14 @@ namespace SharpGen.Model
             get { return PublicType.Type == typeof (string); }
         }
 
+        public bool IsGenericType
+        {
+            get { return PublicType.IsGenericTypeParam; }
+        }
+
         public bool IsValueType
         {
-            get { return PublicType is CsStruct || PublicType is CsEnum || (PublicType.Type != null && (PublicType.Type.IsValueType || PublicType.Type.IsPrimitive)); }
+            get { return PublicType.IsGenericTypeParam || PublicType is CsStruct || PublicType is CsEnum || (PublicType.Type != null && (PublicType.Type.IsValueType || PublicType.Type.IsPrimitive)); }
         }
 
         public bool IsStructClass
@@ -226,6 +231,11 @@ namespace SharpGen.Model
                 // All ComArray are handle the same way
                 if (IsComArray)
                     return "(void*)((" + Name + " == null)?IntPtr.Zero:" + Name + ".NativePointer)";
+
+                if (IsGenericType && IsArray)
+                {
+                    return "Interop.Fixed(ref " + Name + ")";
+                }
 
                 if (IsOut)
                 {

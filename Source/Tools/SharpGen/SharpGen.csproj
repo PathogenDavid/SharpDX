@@ -172,6 +172,7 @@
     <Compile Include="Logging\LogLocation.cs" />
     <Compile Include="Model\CsComArray.cs" />
     <Compile Include="Model\CsEnumItem.cs" />
+    <Compile Include="Model\CsGenericTypeParameter.cs" />
     <Compile Include="Model\InteropMethodSignature.cs" />
     <Compile Include="Generator\EnumTransform.cs" />
     <Compile Include="Generator\InterfaceTransform.cs" />

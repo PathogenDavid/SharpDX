@@ -81,6 +81,21 @@ namespace SharpGen.Config
         public string Marshal { get; set; }
 
         /// <summary>
+        /// Gets or sets the generic name to use for this type
+        /// </summary>
+        [XmlAttribute("use-generic")]
+        public string UseGeneric { get; set; }
+
+        /// <summary>
+        /// Size to be used when use-generic has a value but there is no SharpDX type in to.
+        /// This value takes precedence over the value that might be inferred from To.
+        /// </summary>
+        [XmlIgnore]
+        public int? SizeOf { get; set; }
+        [XmlAttribute("sizeof")]
+        public int _SizeOf_ { get { return SizeOf.Value; } set { SizeOf = value; } } public bool ShouldSerialize_SizeOf_() { return SizeOf != null; }
+
+        /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
         /// <returns>

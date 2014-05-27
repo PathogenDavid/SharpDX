@@ -51,6 +51,27 @@ namespace SharpGen.Model
             }
         }
 
+        private HashSet<CsGenericTypeParameter> _genericTypeParameters = new HashSet<CsGenericTypeParameter>();
+        public HashSet<CsGenericTypeParameter> GenericTypeParameters
+        {
+            get { return _genericTypeParameters; }
+        }
+
+        public void AddGenericTypeParameter(string name, int? sizeOf)
+        {
+            _genericTypeParameters.Add(new CsGenericTypeParameter(name, sizeOf));
+        }
+
+        public void AddGenericTypeParameter(string name, int sizeOf)
+        {
+            AddGenericTypeParameter(name, sizeOf == Int32.MinValue ? null : (int?)sizeOf);
+        }
+
+        public void AddGenericTypeParameter(CsTypeBase type)
+        {
+            AddGenericTypeParameter(type.QualifiedName, type.SizeOf);
+        }
+
         public bool Hidden { get; set; }
 
         public int ParameterCount
