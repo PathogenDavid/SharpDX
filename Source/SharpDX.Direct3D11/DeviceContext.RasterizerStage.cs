@@ -106,13 +106,14 @@ namespace SharpDX.Direct3D11
         /// <unmanaged-short>ID3D11DeviceContext::RSSetScissorRects</unmanaged-short>	
         public void SetScissorRectangle(int left, int top, int right, int bottom)
         {
-            int[] rect = { left, top, right, bottom };
             unsafe
             {
-                fixed (int* rectP = rect)
-                {
-                    SetScissorRects(1, (IntPtr)rectP);
-                }
+                int* rect = stackalloc int[4];
+                rect[0] = left;
+                rect[1] = top;
+                rect[2] = right;
+                rect[3] = bottom;
+                SetScissorRects(1, (IntPtr)rect);
             }
         }
 
@@ -155,13 +156,16 @@ namespace SharpDX.Direct3D11
         /// <unmanaged-short>ID3D11DeviceContext::RSSetViewports</unmanaged-short>	
         public void SetViewport(float x, float y, float width, float height, float minZ = 0.0f, float maxZ = 1.0f)
         {
-            float[] viewport = { x, y, width, height, minZ, maxZ };
             unsafe
             {
-                fixed (float* viewportP = viewport)
-                {
-                    SetViewports(1, (IntPtr)viewportP);
-                }
+                float* viewport = stackalloc float[6];
+                viewport[0] = x;
+                viewport[1] = y;
+                viewport[2] = width;
+                viewport[3] = height;
+                viewport[4] = minZ;
+                viewport[5] = maxZ;
+                SetViewports(1, (IntPtr)viewport);
             }
         }
 
